@@ -1,34 +1,39 @@
 package org.jshap;
 
-import java.util.Scanner;
+import java.util.Scanner; // Для ввода с клавиатуры
 import org.jshap.containers.LinkedList;
 import org.jshap.tokens.VariableToken;
+import static org.jshap.Solution.calcEquation;
 
 public class Main {
-    public static LinkedList<VariableToken> setVar() {
-        LinkedList<VariableToken> var = new LinkedList<>();
+    /**
+     * Метод для ввода переменных с клавиатуры
+     * @return список из объявленных переменных
+     */
+    public static LinkedList<VariableToken> setVars() {
+        LinkedList<VariableToken> vars = new LinkedList<>();
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
             String name = scanner.next();
             if(".".equals(name)) {
-                return var;
+                return vars;
             }
-            Double value = scanner.nextDouble();
+            String value = scanner.next();
 
-            var.pushBack(new VariableToken(name, value));
+            vars.pushBack(new VariableToken(name, Double.parseDouble(value), false));
         }
     }
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("Введите арифметическое выражение: ");
-        String eq = scanner.nextLine();
+        System.out.println("Введите арифметическое выражение: "); // e.g sin[2 * x] + 2 ^ 5 - 1
+        String equation = scanner.nextLine();
 
-        System.out.println("Введите переменные в формате name value: ");
-        LinkedList<VariableToken> var = setVar();
+        System.out.println("Введите переменные (до точки) в формате name value: "); // e.g x 3
+        LinkedList<VariableToken> vars = setVars();
 
-        System.out.printf(Solution.calcEquation(eq, var).toString());
+        System.out.printf("Ответ: " + calcEquation(equation, vars).toString()); // ~30.7
     }
 }

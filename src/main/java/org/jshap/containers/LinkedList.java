@@ -1,5 +1,7 @@
 package org.jshap.containers;
 
+//по-хорошему, вынести Node, либо наследовать список от стека
+
 /**
  * Класс LinkedList представляет собой реализацию односвязного списка
  * @param <T> тип данных элементов списка
@@ -23,7 +25,7 @@ public class LinkedList <T> {
         }
 
         /**
-         * Перегруженный метод toString класса Object
+         * Переопределенный метод toString класса Object
          * @return возвращает строку с информацией об элементе узла
          */
         @Override
@@ -65,7 +67,7 @@ public class LinkedList <T> {
     /**
      * Метод получения хранящегося в списке значения по индексу
      * @param ind индекс, по которому находится значение
-     * @return Значение найденного элемента
+     * @return значение найденного элемента
      * @throws IndexOutOfBoundsException при выходе за границы списка
      */
     public T at(int ind) {
@@ -139,7 +141,7 @@ public class LinkedList <T> {
     }
 
     /**
-     * Перегруженный метод toString класса Object
+     * Переопределенный метод toString класса Object
      * @return возвращает строку с информацией об элементах списка
      */
     @Override

@@ -1,14 +1,30 @@
 package org.jshap.containers;
 
+/**
+ * Класс SimpleStack представляет собой реализацию стека, понадобится для работы с постфиксной формой
+ * @param <T> тип данных элементов стека
+ * @author jshap
+ */
 public class SimpleStack <T> {
+    /**
+     * Node - класс узлов, из которых состоит список
+     */
     final private static class Node <T> {
         final private T data;
         private Node<T> next;
 
+        /**
+         * Конструктор с параметром
+         * @param data данные, которые будут храниться в узле
+         */
         private Node(T data) {
             this.data = data;
         }
 
+        /**
+         * Переопределенный метод toString класса Object
+         * @return возвращает строку с информацией об элементе узла
+         */
         @Override
         public String toString() {
             return data.toString();
@@ -18,19 +34,18 @@ public class SimpleStack <T> {
     private Node<T> head;
     private int size;
 
+    /**
+     * Конструктор по умолчанию
+     */
     public SimpleStack() {
         head = null;
         size = 0;
     }
 
-    public T top() {
-        if (head == null) {
-            throw new NullPointerException();
-        }
-
-        return head.data;
-    }
-
+    /**
+     * Метод добавления элемента в стек
+     * @param data данные, которые будут храниться в узле
+     */
     public void push(T data) {
         if (head == null) {
             head = new Node<>(data);
@@ -43,6 +58,24 @@ public class SimpleStack <T> {
         ++size;
     }
 
+    /**
+     * Метод получения значения, хранящегося на вершине стека
+     * @return значение на вершине
+     * @throws NullPointerException стек пустой
+     */
+    public T top() {
+        if (head == null) {
+            throw new NullPointerException();
+        }
+
+        return head.data;
+    }
+
+    /**
+     * Метод удаления хранящегося на вершине стека значения
+     * @return значение, которое мы удалили
+     * @throws NullPointerException стек пустой
+     */
     public T pop() {
       if (head == null) {
           throw new NullPointerException();
@@ -56,19 +89,34 @@ public class SimpleStack <T> {
       return returnVal;
     }
 
+    /**
+     * Метод очистки стека
+     */
     public void clear() {
         head = null;
         size = 0;
     }
 
-    public int size() {
-        return size;
-    }
-
+    /**
+     * Метод проверки стека на пустоту
+     * @return булевое значение
+     */
     public boolean isEmpty() {
         return head == null;
     }
 
+    /**
+     * Метод получения размерности стека
+     * @return размер стека
+     */
+    public int size() {
+        return size;
+    }
+
+    /**
+     * Переопределенный метод toString класса Object
+     * @return возвращает строку с информацией об элементах стека
+     */
     @Override
     public String toString() {
         String str = "[ ";
