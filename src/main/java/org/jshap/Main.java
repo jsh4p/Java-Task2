@@ -28,7 +28,7 @@ public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("Введите арифметическое выражение: "); // e.g sin[2 * x] + 2 ^ 5 - 1
+        System.out.println("Введите арифметическое выражение: "); // e.g sin(2 * x) + 2 ^ 5 - 1
         String equation = scanner.nextLine();
 
         System.out.println("Введите переменные (до точки) в формате name value: "); // e.g x 3

@@ -41,42 +41,16 @@ public class Lexer {
                 } else {
                     tokens.pushBack(vars.at(ind));
                 }
-            } else if (curToken.contains("[") && isFun(curToken.substring(0, curToken.indexOf('[')))) { //Пуш функций
-                String funName = curToken.substring(0, curToken.indexOf('['));
+            } else if (curToken.length() > 3 && curToken.contains("(") && isFun(curToken.substring(0, curToken.indexOf('(')))) { //Пуш функций
+                String funName = curToken.substring(0, curToken.indexOf('('));
                 boolean isInverted = false;
 
                 if ('+' == curToken.charAt(0) || '-' == curToken.charAt(0)) {
-                    funName = curToken.substring(1, curToken.indexOf('['));
+                    funName = funName.substring(1);
                     isInverted = true;
                 }
 
-                String param = curToken.substring(curToken.indexOf('[') + 1);
-                int amountOpen = 1;
-                int amountClose = 0;
-
-                for (int i = 0; i < param.length(); ++i) {
-                    if (param.charAt(i) == '[') {
-                        ++amountOpen;
-                    } else if (param.charAt(i) == ']') {
-                        ++amountClose;
-                    }
-                }
-
-                while (amountOpen != amountClose) {
-                    curToken = tokenizer.nextToken();
-
-                    for (int i = 0; i < curToken.length(); ++i) {
-                        if (curToken.charAt(i) == '[') {
-                            ++amountOpen;
-                        } else if (curToken.charAt(i) == ']') {
-                            ++amountClose;
-                        }
-                    }
-
-                    param += curToken;
-                }
-
-                param = param.substring(0,param.length() - 1);
+                String param = getParam(curToken, tokenizer);
 
                 tokens.pushBack(makeToken(funName, param, isInverted));
             } else { // Пуш скобок
@@ -93,26 +67,120 @@ public class Lexer {
      * @return булевое значение
      */
     public static boolean isNumber(final String stringToCheck) {
-        for (int i = 0; i < stringToCheck.length(); ++i) {
-            if (i == 0 && ('+' == stringToCheck.charAt(0) || '-' == stringToCheck.charAt(0))) {
-                if (stringToCheck.length() == 1) {
-                    return false;
-                }
+        String string = stringToCheck;
 
-                continue;
+        if ('+' == string.charAt(0) || '-' == string.charAt(0)) {
+            if (string.length() == 1) {
+                return false;
             }
 
-            if (!Character.isDigit(stringToCheck.charAt(i)) && '.' != stringToCheck.charAt(i)) {
+            string = stringToCheck.substring(1);
+        }
+
+        if ('.' == string.charAt(0)) {
+            return false;
+        }
+
+        int amountOfPoints = 0;
+
+        for (int i = 0; i < string.length(); ++i) {
+            if (!Character.isDigit(string.charAt(i)) && '.' != string.charAt(i)) {
                 return false;
+            }
+
+            if ('.' == string.charAt(i)) {
+                ++amountOfPoints;
             }
         }
 
-        return true;
+        return amountOfPoints <= 1;
+    }
+
+    /**
+     * Метод поиска заданной в выражении переменной в списке объявленных переменных
+     * @param varName переменная, которая ищется в списке
+     * @param vars список переменных
+     * @return позиция переменной в списке, в случае необнаружения возвращает -1
+     */
+    public static int findVar(final String varName, final LinkedList<VariableToken> vars) {
+        String var = varName;
+
+        if ('+' == varName.charAt(0) || '-' == varName.charAt(0)) {
+            if (varName.length() == 1) {
+                return -1;
+            }
+
+            var = varName.substring(1);
+        }
+
+        for (int i = 0; i < vars.size(); ++i) {
+            if (vars.at(i).name().equals(var)) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    /**
+     * Метод поиска функции в качестве реализованной
+     * @param funName функция, которая ищется
+     * @return булевое значение
+     */
+    public static boolean isFun(final String funName) {
+        String fun = funName;
+
+        if ('+' == funName.charAt(0) || '-' == funName.charAt(0)) {
+            fun = funName.substring(1);
+        }
+
+        switch(fun) {
+            case"sin","cos","tan","atan","log","log10",
+                    "abs","exp" -> {
+                return true;
+            }
+            default -> {
+                return false;
+            }
+        }
+    }
+
+    /**
+     * Метод вычленения параметра из функции
+     * @param curToken текущий токен
+     * @param tokenizer токенайзер
+     * @return параметр функции
+     */
+    public static String getParam(String curToken, final StringTokenizer tokenizer) {
+        String param = "";
+        int braceDifference = 0;
+
+        curToken = curToken.substring(curToken.indexOf('('));
+        do {
+            for (int i = 0; i < curToken.length(); ++i) {
+                if (curToken.charAt(i) == '(') {
+                    ++braceDifference;
+                } else if (curToken.charAt(i) == ')') {
+                    --braceDifference;
+                }
+            }
+
+            param += curToken;
+            if (tokenizer.hasMoreTokens()) {
+                curToken = tokenizer.nextToken();
+            } else if (braceDifference != 0) {
+                throw new RuntimeException("Incorrect arrangement of braces/Incorrect tokenizer");
+            }
+        } while (braceDifference != 0);
+
+        param = param.substring(1, param.length() - 1);
+
+        return param;
     }
 
     /**
      * Метод для генерации Function и BinaryOperation токенов
-     * @param token токен в строком представлении
+     * @param token токен в строковом представлении
      * @param param параметр функции
      * @param isInverted стоит ли минус перед функцией
      * @return токен в качестве Record'а
@@ -166,59 +234,6 @@ public class Lexer {
                 return new BraceToken(BraceType.CLOSE_BRACKET);
             }
             default -> throw new RuntimeException("Unexpected token " + token);
-        }
-    }
-
-    /**
-     * Метод поиска заданной в выражении переменной в списке объявленных переменных
-     * @param varName переменная, которая ищется в списке
-     * @param vars список переменных
-     * @return позиция переменной в списке, в случае необнаружения возвращает -1
-     */
-    public static int findVar(final String varName, final LinkedList<VariableToken> vars) {
-        for (int i = 0; i < vars.size(); ++i) {
-            if (i == 0 && ('+' == varName.charAt(0) || '-' == varName.charAt(0))) {
-                if (varName.length() == 1) {
-                    return -1;
-                }
-
-                if (vars.at(i).name().equals(varName.substring(1))) {
-                    return i;
-                }
-
-                continue;
-            }
-
-            if (vars.at(i).name().equals(varName)) {
-                return i;
-            }
-        }
-
-        return -1;
-    }
-
-    /**
-     * Метод поиска функции в качестве реализованной
-     * @param funName функция, которая ищется
-     * @return булевое значение
-     */
-    public static boolean isFun(final String funName) {
-        String fun = "";
-
-        if ('+' == funName.charAt(0) || '-' == funName.charAt(0)) {
-            fun = funName.substring(1);
-        } else {
-            fun = funName;
-        }
-
-        switch(fun) {
-            case"sin","cos","tan","atan","log","log10",
-                    "abs","exp" -> {
-                return true;
-            }
-            default -> {
-                return false;
-            }
         }
     }
 }
