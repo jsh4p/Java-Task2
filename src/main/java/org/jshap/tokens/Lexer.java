@@ -50,7 +50,7 @@ public class Lexer {
                     isInverted = true;
                 }
 
-                String param = getParam(curToken, tokenizer);
+                String param = getFunParam(curToken, tokenizer);
 
                 tokens.pushBack(makeToken(funName, param, isInverted));
             } else { // Пуш скобок
@@ -63,32 +63,32 @@ public class Lexer {
 
     /**
      * Метод проверки, является ли заданная строка числом
-     * @param stringToCheck строка для проверки
+     * @param string строка для проверки
      * @return булевое значение
      */
-    public static boolean isNumber(final String stringToCheck) {
-        String string = stringToCheck;
+    public static boolean isNumber(final String string) {
+        String str = string;
 
-        if ('+' == string.charAt(0) || '-' == string.charAt(0)) {
-            if (string.length() == 1) {
+        if ('+' == str.charAt(0) || '-' == str.charAt(0)) {
+            if (str.length() == 1) {
                 return false;
             }
 
-            string = stringToCheck.substring(1);
+            str = string.substring(1);
         }
 
-        if ('.' == string.charAt(0)) {
+        if ('.' == str.charAt(0)) {
             return false;
         }
 
         int amountOfPoints = 0;
 
-        for (int i = 0; i < string.length(); ++i) {
-            if (!Character.isDigit(string.charAt(i)) && '.' != string.charAt(i)) {
+        for (int i = 0; i < str.length(); ++i) {
+            if (!Character.isDigit(str.charAt(i)) && '.' != str.charAt(i)) {
                 return false;
             }
 
-            if ('.' == string.charAt(i)) {
+            if ('.' == str.charAt(i)) {
                 ++amountOfPoints;
             }
         }
@@ -151,7 +151,7 @@ public class Lexer {
      * @param tokenizer токенайзер
      * @return параметр функции
      */
-    public static String getParam(String curToken, final StringTokenizer tokenizer) {
+    public static String getFunParam(String curToken, final StringTokenizer tokenizer) {
         String param = "";
         int braceDifference = 0;
 
