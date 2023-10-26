@@ -53,7 +53,7 @@ public class Lexer {
                 String param = getFunParam(curToken, tokenizer);
 
                 tokens.pushBack(makeToken(funName, param, isInverted));
-            } else { // Пуш скобок
+            } else { // Пуш скобок и бинарных операций
                 tokens.pushBack(makeToken(curToken, "", false));
             }
         }
