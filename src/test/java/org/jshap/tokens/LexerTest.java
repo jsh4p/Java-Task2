@@ -9,6 +9,31 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class LexerTest {
     /**
+     * Тест метода проверки, является ли строка переменной
+     */
+    @Test
+    void findVarTest() {
+        LinkedList<VariableToken> vars = new LinkedList<>();
+        vars.pushBack(new VariableToken("x", 3., false));
+        vars.pushBack(new VariableToken("y", -1., false));
+
+        assertEquals(1, Lexer.findVar("y", vars));
+        assertEquals(-1, Lexer.findVar("z", vars));
+    }
+
+    /**
+     * Тест метода проверки, является ли строка функцией
+     */
+    @Test
+    void isFunTest() {
+        String funName1 = "sin";
+        String funName2 = "син";
+
+        assertTrue(Lexer.isFun(funName1));
+        assertFalse(Lexer.isFun(funName2));
+    }
+
+    /**
      * Тест метода получения параметра функции
      */
     @Test
@@ -57,11 +82,16 @@ class LexerTest {
     @Test
     void isNumberTestWithSign() {
         String num1 = "-5.8";
+
         assertTrue(Lexer.isNumber(num1));
 
         String num2 = "+2.3";
 
         assertTrue(Lexer.isNumber(num2));
+
+        String num3 = "-3.9abc";
+
+        assertFalse(Lexer.isNumber(num3));
     }
 
     /**
