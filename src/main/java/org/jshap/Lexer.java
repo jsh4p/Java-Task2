@@ -1,7 +1,8 @@
-package org.jshap.tokens;
+package org.jshap;
 
 import java.util.StringTokenizer;
 import org.jshap.containers.LinkedList;
+import org.jshap.tokens.*;
 
 /**
  * Класс для работы со строкой и её разбиения на типизированные токены
@@ -15,14 +16,14 @@ public class Lexer {
 
     /**
      * Метод для получения списка токенов, обёрнутый в соответствующий Record
-     * @param equation арифметическое выражение
+     * @param expression арифметическое выражение
      * @param vars список объявленных переменных
      * @return список токенов
      * @throws RuntimeException неизвестный токен
      */
-    public static LinkedList<Token> getTokens(final String equation, final LinkedList<VariableToken> vars) {
+    public static LinkedList<Token> getTokens(final String expression, final LinkedList<VariableToken> vars) {
         LinkedList<Token> tokens = new LinkedList<>();
-        StringTokenizer tokenizer = new StringTokenizer(equation, DELIMITERS, true);
+        StringTokenizer tokenizer = new StringTokenizer(expression, DELIMITERS, true);
 
         while (tokenizer.hasMoreTokens()) {
             String curToken = tokenizer.nextToken();
@@ -98,23 +99,23 @@ public class Lexer {
 
     /**
      * Метод поиска заданной в выражении переменной в списке объявленных переменных
-     * @param varName переменная, которая ищется в списке
+     * @param string переменная, которая ищется в списке
      * @param vars список переменных
      * @return позиция переменной в списке, в случае необнаружения возвращает -1
      */
-    public static int findVar(final String varName, final LinkedList<VariableToken> vars) {
-        String var = varName;
+    public static int findVar(final String string, final LinkedList<VariableToken> vars) {
+        String varName = string;
 
-        if ('+' == varName.charAt(0) || '-' == varName.charAt(0)) {
-            if (varName.length() == 1) {
+        if ('+' == string.charAt(0) || '-' == string.charAt(0)) {
+            if (string.length() == 1) {
                 return -1;
             }
 
-            var = varName.substring(1);
+            varName = string.substring(1);
         }
 
         for (int i = 0; i < vars.size(); ++i) {
-            if (vars.at(i).name().equals(var)) {
+            if (vars.at(i).name().equals(varName)) {
                 return i;
             }
         }
@@ -124,18 +125,18 @@ public class Lexer {
 
     /**
      * Метод поиска функции в качестве реализованной
-     * @param fun функция, которая ищется
+     * @param string функция, которая ищется
      * @return булевое значение
      */
-    public static boolean isFun(final String fun) {
-        if (!fun.contains("(") || fun.length() < 2) {
+    public static boolean isFun(final String string) {
+        if (!string.contains("(") || string.length() < 2) {
             return false;
         }
 
-        String funName = fun.substring(0, fun.indexOf('('));
+        String funName = string.substring(0, string.indexOf('('));
 
         if ('+' == funName.charAt(0) || '-' == funName.charAt(0)) {
-            funName = fun.substring(1);
+            funName = string.substring(1);
         }
 
         switch(funName) {

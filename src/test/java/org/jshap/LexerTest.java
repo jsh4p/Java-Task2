@@ -1,11 +1,10 @@
-package org.jshap.tokens;
+package org.jshap;
 
 import org.junit.jupiter.api.Test;
-
-import org.jshap.containers.LinkedList;
-import java.util.StringTokenizer;
-
 import static org.junit.jupiter.api.Assertions.*;
+import java.util.StringTokenizer;
+import org.jshap.tokens.VariableToken;
+import org.jshap.containers.LinkedList;
 
 class LexerTest {
     /**
@@ -99,12 +98,12 @@ class LexerTest {
      */
     @Test
     void getTokensTest() {
-        String equation = "exp(x) + 3";
+        String expression = "exp(x) + 3";
         LinkedList<VariableToken> vars = new LinkedList<>();
 
         assertEquals("[ FunctionToken[function=EXP, param=x, isInverted=false] ->" +
                         " BinaryOperationToken[operation=PLUS] -> NumberToken[value=3.0] ]",
-                Lexer.getTokens(equation, vars).toString());
+                Lexer.getTokens(expression, vars).toString());
     }
 
     /**
@@ -112,11 +111,11 @@ class LexerTest {
      */
     @Test
     void getTokensExceptionTest() {
-        String equation = "blablabla";
+        String expression = "blablabla";
         LinkedList<VariableToken> vars = new LinkedList<>();
 
         assertThrows(RuntimeException.class, () -> {
-            Lexer.getTokens(equation, vars);
+            Lexer.getTokens(expression, vars);
         });
     }
 }

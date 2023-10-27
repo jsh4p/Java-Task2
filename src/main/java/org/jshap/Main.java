@@ -3,7 +3,7 @@ package org.jshap;
 import java.util.Scanner; // Для ввода с клавиатуры
 import org.jshap.containers.LinkedList;
 import org.jshap.tokens.VariableToken;
-import static org.jshap.Solution.calcEquation;
+import static org.jshap.Solution.calcExpression;
 
 public class Main {
     /**
@@ -30,11 +30,11 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
 
         System.out.println("Введите арифметическое выражение: "); // e.g sin(2 * x) + 2 ^ 5 - 1
-        String equation = scanner.nextLine();
+        String expression = scanner.nextLine();
 
         System.out.println("Введите переменные (до точки) в формате name value: "); // e.g x 3
         LinkedList<VariableToken> vars = setVars();
 
-        System.out.printf("Ответ: " + calcEquation(equation, vars).toString()); // ~30.7
+        System.out.printf("Ответ: " + calcExpression(expression, vars).toString()); // ~30.7
     }
 }
