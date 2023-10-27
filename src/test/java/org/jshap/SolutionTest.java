@@ -1,7 +1,6 @@
 package org.jshap;
 
 import org.jshap.containers.LinkedList;
-import org.jshap.tokens.Lexer;
 import org.jshap.tokens.Token;
 import org.jshap.tokens.VariableToken;
 import org.junit.jupiter.api.Test;
@@ -64,7 +63,6 @@ class SolutionTest {
     void toPostfixFormTest() {
         String equation = "-5.3 * 14 + 1";
         LinkedList<VariableToken> vars = new LinkedList<>();
-        LinkedList<Token> postfixForm = Solution.toPostfixForm(equation, vars);
 
         assertEquals("[ NumberToken[value=-5.3] -> NumberToken[value=14.0] ->" +
                 " BinaryOperationToken[operation=MULTIPLY] -> NumberToken[value=1.0] ->" +

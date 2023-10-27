@@ -3,6 +3,8 @@ package org.jshap;
 import org.jshap.containers.*;
 import org.jshap.tokens.*;
 
+// получше декомпозировать, наверное
+
 /**
  * Класс, состоящий из методов, необходимых для решения задачи
  * @author jshap

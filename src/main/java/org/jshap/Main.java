@@ -17,6 +17,7 @@ public class Main {
         while (true) {
             String name = scanner.next();
             if(".".equals(name)) {
+                scanner.close();
                 return vars;
             }
             String value = scanner.next();
