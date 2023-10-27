@@ -26,8 +26,8 @@ class LexerTest {
      */
     @Test
     void isFunTest() {
-        String funName1 = "sin";
-        String funName2 = "син";
+        String funName1 = "sin()";
+        String funName2 = "син()";
 
         assertTrue(Lexer.isFun(funName1));
         assertFalse(Lexer.isFun(funName2));

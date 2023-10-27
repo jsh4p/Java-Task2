@@ -41,7 +41,7 @@ public class Lexer {
                 } else {
                     tokens.pushBack(vars.at(ind));
                 }
-            } else if (curToken.length() > 3 && curToken.contains("(") && isFun(curToken.substring(0, curToken.indexOf('(')))) { //Пуш функций
+            } else if (isFun(curToken)) { //Пуш функций
                 String funName = curToken.substring(0, curToken.indexOf('('));
                 boolean isInverted = false;
 
@@ -124,17 +124,21 @@ public class Lexer {
 
     /**
      * Метод поиска функции в качестве реализованной
-     * @param funName функция, которая ищется
+     * @param fun функция, которая ищется
      * @return булевое значение
      */
-    public static boolean isFun(final String funName) {
-        String fun = funName;
-
-        if ('+' == funName.charAt(0) || '-' == funName.charAt(0)) {
-            fun = funName.substring(1);
+    public static boolean isFun(final String fun) {
+        if (!fun.contains("(") || fun.length() < 2) {
+            return false;
         }
 
-        switch(fun) {
+        String funName = fun.substring(0, fun.indexOf('('));
+
+        if ('+' == funName.charAt(0) || '-' == funName.charAt(0)) {
+            funName = fun.substring(1);
+        }
+
+        switch(funName) {
             case"sin","cos","tan","atan","log","log10",
                     "abs","exp" -> {
                 return true;
