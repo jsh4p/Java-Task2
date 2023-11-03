@@ -5,7 +5,7 @@ package org.jshap.tokens;
  * @param value хранимое число
  */
 public record NumberToken (
-    Double value
+    double value
 ) implements Token {
     @Override
     public TokenType type() {

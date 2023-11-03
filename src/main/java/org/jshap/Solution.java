@@ -35,7 +35,7 @@ public class Solution {
                     case BinaryOperationType.POWER -> values.push(Math.pow(left, right));
                 }
             } else if (postfixForm.at(i) instanceof VariableToken) {
-                Double value = ((VariableToken) postfixForm.at(i)).value();
+                double value = ((VariableToken) postfixForm.at(i)).value();
 
                 if (((VariableToken) postfixForm.at(i)).isInverted()) {
                     value *= -1;
@@ -43,8 +43,8 @@ public class Solution {
 
                 values.push(value);
             } else if (postfixForm.at(i) instanceof FunctionToken) {
-                Double param = calcExpression(((FunctionToken) postfixForm.at(i)).param(), vars);
-                Double value = 1.;
+                double param = calcExpression(((FunctionToken) postfixForm.at(i)).param(), vars);
+                double value = 1.;
 
                 switch(((FunctionToken) postfixForm.at(i)).function()) {
                     case FunctionType.SIN -> value = Math.sin(param);

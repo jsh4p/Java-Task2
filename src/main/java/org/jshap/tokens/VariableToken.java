@@ -8,7 +8,7 @@ package org.jshap.tokens;
  */
 public record VariableToken (
     String name,
-    Double value,
+    double value,
     boolean isInverted
 ) implements Token {
     @Override
