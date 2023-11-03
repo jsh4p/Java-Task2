@@ -32,31 +32,7 @@ public class Lexer {
                 continue;
             }
 
-            if (isNumber(curToken)) { // Пуш чисел
-                tokens.pushBack(new NumberToken(Double.parseDouble(curToken)));
-            } else if (findVar(curToken, vars) != -1) { // Пуш переменных
-                int ind = findVar(curToken, vars);
-
-                if (curToken.charAt(0) == '-') {
-                    tokens.pushBack(new VariableToken(vars.at(ind).name(), vars.at(ind).value(), true));
-                } else {
-                    tokens.pushBack(vars.at(ind));
-                }
-            } else if (isFun(curToken)) { //Пуш функций
-                String funName = curToken.substring(0, curToken.indexOf('('));
-                boolean isInverted = false;
-
-                if ('+' == curToken.charAt(0) || '-' == curToken.charAt(0)) {
-                    funName = funName.substring(1);
-                    isInverted = true;
-                }
-
-                String param = getFunParam(curToken, tokenizer);
-
-                tokens.pushBack(makeToken(funName, param, isInverted));
-            } else { // Пуш скобок и бинарных операций
-                tokens.pushBack(makeToken(curToken, "", false));
-            }
+            tokens.pushBack(makeToken(curToken, tokenizer, vars));
         }
 
         return tokens;
@@ -136,7 +112,7 @@ public class Lexer {
         String funName = string.substring(0, string.indexOf('('));
 
         if ('+' == funName.charAt(0) || '-' == funName.charAt(0)) {
-            funName = string.substring(1);
+            funName = funName.substring(1);
         }
 
         switch(funName) {
@@ -157,7 +133,7 @@ public class Lexer {
      * @return параметр функции
      */
     public static String getFunParam(String curToken, final StringTokenizer tokenizer) {
-        String param = "";
+        StringBuilder param = new StringBuilder();
         int braceDifference = 0;
 
         curToken = curToken.substring(curToken.indexOf('('));
@@ -170,7 +146,7 @@ public class Lexer {
                 }
             }
 
-            param += curToken;
+            param.append(curToken);
             if (tokenizer.hasMoreTokens()) {
                 curToken = tokenizer.nextToken();
             } else if (braceDifference != 0) {
@@ -178,45 +154,76 @@ public class Lexer {
             }
         } while (braceDifference != 0);
 
-        param = param.substring(1, param.length() - 1);
+        param = new StringBuilder(param.substring(1, param.length() - 1));
 
-        return param;
+        return param.toString();
     }
 
     /**
-     * Метод для генерации Function и BinaryOperation токенов
+     * Метод для генерации токенов
      * @param token токен в строковом представлении
-     * @param param параметр функции
-     * @param isInverted стоит ли минус перед функцией
      * @return токен в качестве Record'а
      * @throws RuntimeException неизвестный токен
      */
-    private static Token makeToken(final String token, final String param, final boolean isInverted) {
+    private static Token makeToken(final String token, final StringTokenizer tokenizer,
+                final LinkedList<VariableToken> vars) {
+        if (isNumber(token)) {
+            return new NumberToken(Double.parseDouble(token));
+        }
+
+        if (findVar(token, vars) != -1) {
+            int ind = findVar(token, vars);
+
+            if (token.charAt(0) == '-') {
+                return new VariableToken(vars.at(ind).name(), vars.at(ind).value(), true);
+            } else {
+                return vars.at(ind);
+            }
+        }
+
+        if (isFun(token)) {
+            boolean isInverted = false;
+            String funName = token.substring(0, token.indexOf('('));
+
+            if ('+' == funName.charAt(0) || '-' == funName.charAt(0)) {
+                if ('-' == funName.charAt(0)) {
+                    isInverted = true;
+                }
+                funName = funName.substring(1);
+            }
+
+            String param = getFunParam(token, tokenizer);
+
+            switch (funName) {
+                case "sin" -> {
+                    return new FunctionToken(FunctionType.SIN, param, isInverted);
+                }
+                case "cos" -> {
+                    return new FunctionToken(FunctionType.COS, param, isInverted);
+                }
+                case "tan" -> {
+                    return new FunctionToken(FunctionType.TAN, param, isInverted);
+                }
+                case "atan" -> {
+                    return new FunctionToken(FunctionType.ATAN, param, isInverted);
+                }
+                case "log" -> {
+                    return new FunctionToken(FunctionType.LOG, param, isInverted);
+                }
+                case "log10" -> {
+                    return new FunctionToken(FunctionType.LOG10, param, isInverted);
+                }
+                case "abs" -> {
+                    return new FunctionToken(FunctionType.ABS, param, isInverted);
+                }
+                case "exp" -> {
+                    return new FunctionToken(FunctionType.EXP, param, isInverted);
+                }
+                default -> throw new RuntimeException("Unexpected token " + token);
+            }
+        }
+
         switch (token) {
-            case"sin" -> {
-                return new FunctionToken(FunctionType.SIN, param, isInverted);
-            }
-            case"cos" -> {
-                return new FunctionToken(FunctionType.COS, param, isInverted);
-            }
-            case"tan" -> {
-                return new FunctionToken(FunctionType.TAN, param, isInverted);
-            }
-            case"atan" -> {
-                return new FunctionToken(FunctionType.ATAN, param, isInverted);
-            }
-            case"log" -> {
-                return new FunctionToken(FunctionType.LOG, param, isInverted);
-            }
-            case"log10" -> {
-                return new FunctionToken(FunctionType.LOG10, param, isInverted);
-            }
-            case"abs" -> {
-                return new FunctionToken(FunctionType.ABS, param, isInverted);
-            }
-            case"exp" -> {
-                return new FunctionToken(FunctionType.EXP, param, isInverted);
-            }
             case"+" -> {
                 return new BinaryOperationToken(BinaryOperationType.PLUS);
             }
