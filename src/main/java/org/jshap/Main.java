@@ -22,7 +22,7 @@ public class Main {
             }
             String value = scanner.next();
 
-            vars.pushBack(new VariableToken(name, Double.parseDouble(value), false));
+            vars.pushBack(new VariableToken(name, Double.parseDouble(value)));
         }
     }
 

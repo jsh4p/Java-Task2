@@ -8,5 +8,5 @@ public enum TokenType {
     NUMBER,
     BRACE,
     VARIABLE,
-    FUNCTION,
+    FUNCTION;
 }

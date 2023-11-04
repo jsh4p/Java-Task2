@@ -14,7 +14,7 @@ class SolutionTest {
         Double value = Math.exp(4) + 3. / 14;
         String expression = "exp(2 * y) + 3. / 14";
         LinkedList<VariableToken> vars = new LinkedList<>();
-        vars.pushBack(new VariableToken("y", 2., false));
+        vars.pushBack(new VariableToken("y", 2.));
 
         assertEquals(value, Solution.calcExpression(expression, vars));
     }

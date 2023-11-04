@@ -11,5 +11,5 @@ public enum FunctionType {
     LOG,
     LOG10,
     ABS,
-    EXP
+    EXP;
 }

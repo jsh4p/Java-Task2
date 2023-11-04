@@ -16,7 +16,7 @@ public class Solution {
      * @throws RuntimeException неизвестный токен, неправильная расстановка скобок
      * @throws NullPointerException стек значений пуст
      */
-    public static Double calcExpression(final String expression, LinkedList<VariableToken> vars) {
+    public static Double calcExpression(final String expression, final LinkedList<VariableToken> vars) {
         LinkedList<Token> postfixForm = PostfixConvertor.toPostfixForm(expression, vars);
         SimpleStack<Double> values = new SimpleStack<>();
 
@@ -35,30 +35,25 @@ public class Solution {
                     case BinaryOperationType.POWER -> values.push(Math.pow(left, right));
                 }
             } else if (postfixForm.at(i) instanceof VariableToken) {
-                double value = ((VariableToken) postfixForm.at(i)).value();
-
-                if (((VariableToken) postfixForm.at(i)).isInverted()) {
-                    value *= -1;
-                }
-
-                values.push(value);
+                values.push(((VariableToken) postfixForm.at(i)).value());
             } else if (postfixForm.at(i) instanceof FunctionToken) {
-                double param = calcExpression(((FunctionToken) postfixForm.at(i)).param(), vars);
-                double value = 1.;
+                String param = ((FunctionToken) postfixForm.at(i)).param();
+                double value = 1;
+                if (param.charAt(0) == '=') {
+                    param = param.substring(1);
+                    value = -1;
+                }
+                double paramVal = calcExpression(param, vars);
 
                 switch(((FunctionToken) postfixForm.at(i)).function()) {
-                    case FunctionType.SIN -> value = Math.sin(param);
-                    case FunctionType.COS -> value = Math.cos(param);
-                    case FunctionType.TAN -> value = Math.tan(param);
-                    case FunctionType.ATAN -> value = Math.atan(param);
-                    case FunctionType.LOG -> value = Math.log(param);
-                    case FunctionType.LOG10 -> value = Math.log10(param);
-                    case FunctionType.ABS -> value = Math.abs(param);
-                    case FunctionType.EXP -> value = Math.exp(param);
-                }
-
-                if (((FunctionToken) postfixForm.at(i)).isInverted()) {
-                    value *= -1;
+                    case FunctionType.SIN -> value *= Math.sin(paramVal);
+                    case FunctionType.COS -> value *= Math.cos(paramVal);
+                    case FunctionType.TAN -> value *= Math.tan(paramVal);
+                    case FunctionType.ATAN -> value *= Math.atan(paramVal);
+                    case FunctionType.LOG -> value *= Math.log(paramVal);
+                    case FunctionType.LOG10 -> value *= Math.log10(paramVal);
+                    case FunctionType.ABS -> value *= Math.abs(paramVal);
+                    case FunctionType.EXP -> value *= Math.exp(paramVal);
                 }
 
                 values.push(value);

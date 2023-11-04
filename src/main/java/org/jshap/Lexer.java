@@ -74,17 +74,17 @@ public class Lexer {
     }
 
     /**
-     * Метод поиска заданной в выражении переменной в списке объявленных переменных
+     * Метод поиска заданной переменной в списке объявленных
      * @param string переменная, которая ищется в списке
      * @param vars список переменных
-     * @return позиция переменной в списке, в случае необнаружения возвращает -1
+     * @return ссылка на найденную переменную
      */
-    public static int findVar(final String string, final LinkedList<VariableToken> vars) {
+    public static VariableToken findVar(final String string, final LinkedList<VariableToken> vars) {
         String varName = string;
 
         if ('+' == string.charAt(0) || '-' == string.charAt(0)) {
             if (string.length() == 1) {
-                return -1;
+                return null;
             }
 
             varName = string.substring(1);
@@ -92,21 +92,21 @@ public class Lexer {
 
         for (int i = 0; i < vars.size(); ++i) {
             if (vars.at(i).name().equals(varName)) {
-                return i;
+                return vars.at(i);
             }
         }
 
-        return -1;
+        return null;
     }
 
     /**
      * Метод поиска функции в качестве реализованной
      * @param string функция, которая ищется
-     * @return булевое значение
+     * @return ссылка на тип функции
      */
-    public static boolean isFun(final String string) {
+    public static FunctionType findFun(final String string) {
         if (!string.contains("(") || string.length() < 2) {
-            return false;
+            return null;
         }
 
         String funName = string.substring(0, string.indexOf('('));
@@ -115,13 +115,33 @@ public class Lexer {
             funName = funName.substring(1);
         }
 
-        switch(funName) {
-            case"sin","cos","tan","atan","log","log10",
-                    "abs","exp" -> {
-                return true;
+        switch (funName) {
+            case "sin" -> {
+                return FunctionType.SIN;
+            }
+            case "cos" -> {
+                return FunctionType.COS;
+            }
+            case "tan" -> {
+                return FunctionType.TAN;
+            }
+            case "atan" -> {
+                return FunctionType.ATAN;
+            }
+            case "log" -> {
+                return FunctionType.LOG;
+            }
+            case "log10" -> {
+                return FunctionType.LOG10;
+            }
+            case "abs" -> {
+                return FunctionType.ABS;
+            }
+            case "exp" -> {
+                return FunctionType.EXP;
             }
             default -> {
-                return false;
+                return null;
             }
         }
     }
@@ -171,56 +191,21 @@ public class Lexer {
             return new NumberToken(Double.parseDouble(token));
         }
 
-        if (findVar(token, vars) != -1) {
-            int ind = findVar(token, vars);
+        VariableToken var;
+        if ((var = findVar(token, vars)) != null) {
+            int k = token.charAt(0) == '-'?-1:1;
 
-            if (token.charAt(0) == '-') {
-                return new VariableToken(vars.at(ind).name(), vars.at(ind).value(), true);
-            } else {
-                return vars.at(ind);
-            }
+            return new VariableToken(var.name(), k * var.value());
         }
 
-        if (isFun(token)) {
-            boolean isInverted = false;
-            String funName = token.substring(0, token.indexOf('('));
-
-            if ('+' == funName.charAt(0) || '-' == funName.charAt(0)) {
-                if ('-' == funName.charAt(0)) {
-                    isInverted = true;
-                }
-                funName = funName.substring(1);
-            }
-
+        FunctionType fun;
+        if ((fun = findFun(token)) != null) {
             String param = getFunParam(token, tokenizer);
+            if ('-' == token.charAt(0)) {
+                param = "=" + param;
+            } // как-то обозначим, что перед функцией стоит минус.
 
-            switch (funName) {
-                case "sin" -> {
-                    return new FunctionToken(FunctionType.SIN, param, isInverted);
-                }
-                case "cos" -> {
-                    return new FunctionToken(FunctionType.COS, param, isInverted);
-                }
-                case "tan" -> {
-                    return new FunctionToken(FunctionType.TAN, param, isInverted);
-                }
-                case "atan" -> {
-                    return new FunctionToken(FunctionType.ATAN, param, isInverted);
-                }
-                case "log" -> {
-                    return new FunctionToken(FunctionType.LOG, param, isInverted);
-                }
-                case "log10" -> {
-                    return new FunctionToken(FunctionType.LOG10, param, isInverted);
-                }
-                case "abs" -> {
-                    return new FunctionToken(FunctionType.ABS, param, isInverted);
-                }
-                case "exp" -> {
-                    return new FunctionToken(FunctionType.EXP, param, isInverted);
-                }
-                default -> throw new RuntimeException("Unexpected token " + token);
-            }
+            return new FunctionToken(fun, param);
         }
 
         switch (token) {

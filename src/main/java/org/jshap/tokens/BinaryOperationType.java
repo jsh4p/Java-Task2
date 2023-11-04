@@ -8,5 +8,5 @@ public enum BinaryOperationType {
     MINUS,
     MULTIPLY,
     DIVIDE,
-    POWER
+    POWER;
 }

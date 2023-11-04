@@ -1,5 +1,6 @@
 package org.jshap;
 
+import org.jshap.tokens.FunctionType;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.StringTokenizer;
@@ -8,28 +9,28 @@ import org.jshap.containers.LinkedList;
 
 class LexerTest {
     /**
-     * Тест метода проверки, является ли строка переменной
+     * Тест метода нахождения переменной
      */
     @Test
     void findVarTest() {
         LinkedList<VariableToken> vars = new LinkedList<>();
-        vars.pushBack(new VariableToken("x", 3., false));
-        vars.pushBack(new VariableToken("y", -1., false));
+        vars.pushBack(new VariableToken("x", 3.));
+        vars.pushBack(new VariableToken("y", -1.));
 
-        assertEquals(1, Lexer.findVar("y", vars));
-        assertEquals(-1, Lexer.findVar("z", vars));
+        assertEquals(vars.at(1), Lexer.findVar("y", vars));
+        assertNull(Lexer.findVar("z", vars));
     }
 
     /**
-     * Тест метода проверки, является ли строка функцией
+     * Тест метода нахождения функции в списке реализованных
      */
     @Test
     void isFunTest() {
         String funName1 = "sin()";
         String funName2 = "син()";
 
-        assertTrue(Lexer.isFun(funName1));
-        assertFalse(Lexer.isFun(funName2));
+        assertEquals(FunctionType.SIN,Lexer.findFun(funName1));
+        assertNull(Lexer.findFun(funName2));
     }
 
     /**
@@ -101,7 +102,7 @@ class LexerTest {
         String expression = "exp(x) + 3";
         LinkedList<VariableToken> vars = new LinkedList<>();
 
-        assertEquals("[ FunctionToken[function=EXP, param=x, isInverted=false] ->" +
+        assertEquals("[ FunctionToken[function=EXP, param=x] ->" +
                         " BinaryOperationToken[operation=PLUS] -> NumberToken[value=3.0] ]",
                 Lexer.getTokens(expression, vars).toString());
     }
