@@ -57,7 +57,7 @@ class LexerTest {
         String fun1 = "-abs(abs(-1)))";
         StringTokenizer tokenizer1 = new StringTokenizer(fun1, " ", true);
 
-        assertThrows(RuntimeException.class, () -> {
+        assertThrows(IllegalArgumentException.class, () -> {
             Lexer.getFunParam(fun1, tokenizer1);
         });
     }

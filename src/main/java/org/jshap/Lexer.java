@@ -19,7 +19,8 @@ public class Lexer {
      * @param expression арифметическое выражение
      * @param vars список объявленных переменных
      * @return список токенов
-     * @throws RuntimeException неизвестный токен
+     * @throws RuntimeException нереализованный токен
+     * @throws IllegalArgumentException некорректный параметр функции
      */
     public static LinkedList<Token> getTokens(final String expression, final LinkedList<VariableToken> vars) {
         LinkedList<Token> tokens = new LinkedList<>();
@@ -151,6 +152,7 @@ public class Lexer {
      * @param curToken текущий токен
      * @param tokenizer токенайзер
      * @return параметр функции
+     * @throws IllegalArgumentException некорректный параметр функции
      */
     public static String getFunParam(String curToken, final StringTokenizer tokenizer) {
         StringBuilder param = new StringBuilder();
@@ -170,7 +172,7 @@ public class Lexer {
             if (tokenizer.hasMoreTokens()) {
                 curToken = tokenizer.nextToken();
             } else if (braceDifference != 0) {
-                throw new RuntimeException("Incorrect arrangement of braces/Incorrect tokenizer");
+                throw new IllegalArgumentException("Incorrect arrangement of braces/Incorrect tokenizer");
             }
         } while (braceDifference != 0);
 
@@ -183,7 +185,8 @@ public class Lexer {
      * Метод для генерации токенов
      * @param token токен в строковом представлении
      * @return токен в качестве Record'а
-     * @throws RuntimeException неизвестный токен
+     * @throws RuntimeException нереализованный токен
+     * @throws IllegalArgumentException некорректный параметр функции
      */
     private static Token makeToken(final String token, final StringTokenizer tokenizer,
                 final LinkedList<VariableToken> vars) {
@@ -230,7 +233,7 @@ public class Lexer {
             case")" -> {
                 return new BraceToken(BraceType.CLOSE_BRACKET);
             }
-            default -> throw new RuntimeException("Unexpected token " + token);
+            default -> throw new RuntimeException("Unrealized token " + token);
         }
     }
 }

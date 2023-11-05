@@ -13,14 +13,15 @@ public class PostfixConvertor {
      * @param expression арифметическое выражение
      * @param vars список объявленных переменных
      * @return список токенов
-     * @throws RuntimeException неизвестный токен
+     * @throws RuntimeException нереализованный токен
+     * @throws IllegalArgumentException выражение записано неправильно
      */
     public static LinkedList<Token> toPostfixForm(final String expression, final LinkedList<VariableToken> vars) {
         LinkedList<Token> result = new LinkedList<>();
         LinkedList<Token> tokens = Lexer.getTokens(expression, vars);
 
         if (!ExpressionChecker.isProperlyArranged(expression, tokens)) {
-            throw new RuntimeException("Equation is not properly arranged");
+            throw new IllegalArgumentException("Equation is not properly arranged");
         }
 
         SimpleStack<Token> operations = new SimpleStack<>();
@@ -45,8 +46,10 @@ public class PostfixConvertor {
 
                             operations.pop();
                         }
+                        default -> throw new RuntimeException("Unrealized token " + tokens.at(i));
                     }
                 }
+                default -> throw new RuntimeException("Unrealized token " + tokens.at(i));
             }
         }
 
@@ -61,12 +64,14 @@ public class PostfixConvertor {
      * Метод получения приоритета бинарных операций
      * @param token токен
      * @return приоритет
+     * @throws RuntimeException нереализованный токен
      */
     private static byte getPriority(Token token) {
         if (token instanceof BinaryOperationToken) {
             return switch (((BinaryOperationToken) token).operation()) {
                 case BinaryOperationType.PLUS, BinaryOperationType.MINUS -> 1;
                 case BinaryOperationType.MULTIPLY, BinaryOperationType.DIVIDE, BinaryOperationType.POWER -> 2;
+                default -> throw new RuntimeException("Unrealized token " + token);
             };
         } else {
             return 0; // скобки

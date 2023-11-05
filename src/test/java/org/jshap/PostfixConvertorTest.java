@@ -28,7 +28,7 @@ class PostfixConvertorTest {
         String expression = "( 13.  / ) 9";
         LinkedList<VariableToken> vars = new LinkedList<>();
 
-        assertThrows(RuntimeException.class, () ->{
+        assertThrows(IllegalArgumentException.class, () ->{
             PostfixConvertor.toPostfixForm(expression, vars);
         });
     }

@@ -13,7 +13,7 @@ public class Solution {
      * @param expression арифметическое выражения для подсчета
      * @param vars список объявленных переменных
      * @return результат выражения
-     * @throws RuntimeException неизвестный токен, неправильная расстановка скобок
+     * @throws RuntimeException нереализованный токен
      * @throws NullPointerException стек значений пуст
      */
     public static Double calcExpression(final String expression, final LinkedList<VariableToken> vars) {
@@ -33,6 +33,7 @@ public class Solution {
                     case BinaryOperationType.MULTIPLY -> values.push(left * right);
                     case BinaryOperationType.DIVIDE -> values.push(left / right);
                     case BinaryOperationType.POWER -> values.push(Math.pow(left, right));
+                    default -> throw new RuntimeException("Unrealized token " + postfixForm.at(i));
                 }
             } else if (postfixForm.at(i) instanceof VariableToken) {
                 values.push(((VariableToken) postfixForm.at(i)).value());
@@ -54,6 +55,7 @@ public class Solution {
                     case FunctionType.LOG10 -> value *= Math.log10(paramVal);
                     case FunctionType.ABS -> value *= Math.abs(paramVal);
                     case FunctionType.EXP -> value *= Math.exp(paramVal);
+                    default -> throw new RuntimeException("Unrealized token " + postfixForm.at(i));
                 }
 
                 values.push(value);

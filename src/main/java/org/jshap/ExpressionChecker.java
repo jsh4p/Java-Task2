@@ -12,6 +12,7 @@ public class ExpressionChecker {
      * Метод проверки правильности введённого выражения
      * @param expression арифметическое выражение
      * @return булевое значение
+     * @throws RuntimeException нереализованный токен
      */
     public static boolean isProperlyArranged(final String expression, final LinkedList<Token> tokens) {
         SimpleStack<Character> stack = new SimpleStack<>();
@@ -81,6 +82,7 @@ public class ExpressionChecker {
                     }
                 }
                 case TokenType.BRACE -> { }
+                default -> throw new RuntimeException("Unrealized token " + tokens.at(i));
             }
         }
 
