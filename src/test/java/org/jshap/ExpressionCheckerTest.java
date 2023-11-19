@@ -8,7 +8,7 @@ import org.jshap.tokens.VariableToken;
 
 class ExpressionCheckerTest {
     /**
-     * Тест метода проверки правильности арифметического выражения
+     * РўРµСЃС‚ РјРµС‚РѕРґР° РїСЂРѕРІРµСЂРєРё РїСЂР°РІРёР»СЊРЅРѕСЃС‚Рё Р°СЂРёС„РјРµС‚РёС‡РµСЃРєРѕРіРѕ РІС‹СЂР°Р¶РµРЅРёСЏ
      */
     @Test
     void isProperlyArrangedTest() {
